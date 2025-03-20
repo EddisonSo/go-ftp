@@ -2,7 +2,6 @@ package protocol
 
 import "encoding/binary"
 import "log"
-import "fmt"
 
 type BaseProtocol struct {
     Type   string;

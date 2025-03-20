@@ -5,6 +5,7 @@ import "net"
 import "io"
 import "strconv"
 import "eddisonso.com/go-ftp/internal/protocol"
+import "eddisonso.com/go-ftp/internal/filehandler"
 
 type Listener interface {
     Listen() error;
@@ -44,6 +45,13 @@ func (s *Server) Listen() {
 	    }
 
 	    protocol.PrintProtocol(p)
+
+	    writer, err := filehandler.NewFilewriter("output.txt")
+	    if err != nil {
+		panic(err)
+	    }
+
+	    writer.Write(p.GetBody())
 	}(conn)
     }
 }
