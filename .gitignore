@@ -1,4 +1,5 @@
 .idea
 .build/
+build/
 input.txt
 output.txt
