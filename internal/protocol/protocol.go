@@ -1,7 +1,9 @@
 package protocol
 
-import "encoding/binary"
-import "log"
+import (
+	"encoding/binary"
+	"errors"
+)
 
 type BaseProtocol struct {
     Type   string;
@@ -47,13 +49,13 @@ func PrintProtocol(p Protocol) {
 func FromBytes(data []byte) (Protocol, error) {
     t := string(data[:4])
     if t != "PULL" && t != "PUSH" {
-	log.Fatal("Invalid Protocol Type, got:", t)
+	return nil, errors.New("Invalid protocol type")
     }
 
     size := binary.LittleEndian.Uint32(data[4:8])
     body := data[8:]
     if uint32(len(body)) != size {
-	return nil, nil
+	return nil, errors.New("Invalid body size")
     }
 
     switch t {
