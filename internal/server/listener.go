@@ -42,12 +42,14 @@ func (s *Server) Listen() {
 
 	    p, err := protocol.FromBytes(data)
 	    if err != nil {
-		panic(err)
+		s.Logger.Error(err.Error())
+		return
 	    }
 
 	    writer, err := filehandler.NewFilewriter("output.txt", s.Logger)
 	    if err != nil {
-		panic(err)
+		s.Logger.Error(err.Error())
+		return
 	    }
 
 	    writer.Write(p.GetBody())
