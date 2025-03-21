@@ -1,19 +1,20 @@
 package server
 
-import "fmt"
-import "net"
-import "io"
-import "strconv"
-import "eddisonso.com/go-ftp/internal/protocol"
-import "eddisonso.com/go-ftp/internal/filehandler"
+import (
+	"io"
+	"net"
+	"strconv"
+	"eddisonso.com/go-ftp/internal/filehandler"
+	"eddisonso.com/go-ftp/internal/protocol"
+)
 
 type Listener interface {
     Listen() error;
 }
 
 func (s *Server) Listen() {
-    fmt.Println("Listening on port: " + strconv.Itoa(s.Config.Port));
-    listener, err := net.Listen("tcp", ":" + strconv.Itoa(s.Config.Port))
+    listener, err := net.Listen("tcp", s.Config.Host.Hostname + ":" + strconv.Itoa(s.Config.Port))
+    s.logger.Info("Listening on: " + s.Config.Host.Hostname + ":" + strconv.Itoa(s.Config.Port))
 
     if err != nil {
 	panic(err);
@@ -23,7 +24,7 @@ func (s *Server) Listen() {
 
     for {
 	conn, err := listener.Accept()
-	fmt.Println("Accepted connection from: " + conn.RemoteAddr().String());
+	s.logger.Info("Connection from: " + conn.RemoteAddr().String())
 
 	if err != nil {
 	    panic(err);
@@ -37,7 +38,7 @@ func (s *Server) Listen() {
 		panic(err)
 	    }
 
-	    fmt.Println("Data: " + string(data))
+	    s.logger.Info("Got: " + string(data))
 
 	    p, err := protocol.FromBytes(data)
 	    if err != nil {
