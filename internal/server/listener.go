@@ -41,13 +41,13 @@ func (s *Server) Listen() {
 
 	    s.Logger.Info("Got: " + fmt.Sprint(data))
 
-	    p, err := protocol.FromBytes(data)
+	    p, err := protocol.FromBytes(data, s.Logger)
 	    if err != nil {
 		s.Logger.Error(err.Error())
 		return
 	    }
 
-	    p.Execute()
+	    p.ExecuteServer(conn)
 	}(conn)
     }
 }
