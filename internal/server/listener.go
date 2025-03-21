@@ -5,7 +5,6 @@ import (
 	"net"
 	"fmt"
 	"strconv"
-	"eddisonso.com/go-ftp/internal/filehandler"
 	"eddisonso.com/go-ftp/internal/protocol"
 )
 
@@ -48,13 +47,7 @@ func (s *Server) Listen() {
 		return
 	    }
 
-	    writer, err := filehandler.NewFilewriter("output.txt", s.Logger)
-	    if err != nil {
-		s.Logger.Error(err.Error())
-		return
-	    }
-
-	    writer.Write(p.GetBody())
+	    p.Execute()
 	}(conn)
     }
 }

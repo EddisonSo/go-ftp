@@ -1,14 +1,14 @@
 package protocol
 
 import (
-	"encoding/binary"
-	"errors"
-	"fmt"
-	"strconv"
-	"eddisonso.com/go-ftp/internal/commands"
+    "errors"
+    "fmt"
+    "eddisonso.com/go-ftp/internal/commands"
+    "log/slog"
 )
 
 type BaseProtocol struct {
+    Logger    *slog.Logger
     CommandId commands.CommandId;
     Other     []byte;
 }
@@ -16,13 +16,14 @@ type BaseProtocol struct {
 type Protocol interface {
     ToBytes() []byte;
     PrintProtocol();
+    Execute();
 }
 
 func PrintProtocol(p Protocol) {
     p.PrintProtocol()
 }
 
-func FromBytes(data []byte) (Protocol, error) {
+func FromBytes(data []byte, logger *slog.Logger) (Protocol, error) {
     if len(data) <= 5 {
 	return nil, errors.New("Invalid protocol size, got: " + fmt.Sprint(len(data)) + " <= 5")
     }
@@ -30,18 +31,14 @@ func FromBytes(data []byte) (Protocol, error) {
     if !commands.ValidCommandId(command){
 	return nil, errors.New("Invalid protocol command id, got: " + string(data[0]))
     }
-
-    size := binary.LittleEndian.Uint32(data[1:5])
-    body := data[5:]
-    if uint32(len(body)) != size {
-	return nil, errors.New("Invalid body size, got: " + strconv.FormatUint(uint64(len(body)), 10) + " expected: " + strconv.FormatUint(uint64(size), 10))
-    }
+    
+    body := data[1:]
 
     switch command {
 	case commands.PUSH:
-	    return NewPullProtocol(size, body), nil
+	    return NewPullProtocol(body, logger), nil
 	case commands.PULL:
-	    return NewPushProtocol(size, body), nil
+	    return NewPushProtocol(body, logger), nil
     }
     return nil, nil;
 }

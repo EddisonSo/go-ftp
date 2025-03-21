@@ -1,17 +1,37 @@
 package protocol
 
-import "eddisonso.com/go-ftp/internal/commands"
+import (
+    "log/slog"
+    "eddisonso.com/go-ftp/internal/commands"
+)
 
 type PullProtocol struct {
     BaseProtocol
+    File string
 }
 
-func NewPullProtocol(size uint32, body []byte) *PullProtocol {
+func NewPullProtocol(content []byte, logger *slog.Logger) *PullProtocol {
+    f := string(content)
     return &PullProtocol{
 	BaseProtocol: BaseProtocol{
+	    Logger:	logger,
 	    CommandId:  commands.PULL,
-	    Size:   size,
-	    Body:   body,
 	},
+	File: f,
     }
+}
+
+func (pp *PullProtocol) ToBytes() []byte {
+    result := []byte{byte(pp.CommandId)}
+    result = append(result, pp.File...)
+    return result
+}
+
+func (pp *PullProtocol) PrintProtocol() {
+    println("PullProtocol")
+    println("File: ", pp.File)
+}
+
+func (pp *PullProtocol) Execute() {
+    return
 }
