@@ -1,10 +1,11 @@
 package protocol
 
 import (
+    "log/slog"
+    "eddisonso.com/go-ftp/internal/commands"
     "errors"
     "fmt"
-    "eddisonso.com/go-ftp/internal/commands"
-    "log/slog"
+    "net"
 )
 
 type BaseProtocol struct {
@@ -16,7 +17,8 @@ type BaseProtocol struct {
 type Protocol interface {
     ToBytes() []byte;
     PrintProtocol();
-    Execute();
+    ExecuteServer(conn net.Conn);
+    ExecuteClient(conn net.Conn);
 }
 
 func PrintProtocol(p Protocol) {
@@ -24,8 +26,8 @@ func PrintProtocol(p Protocol) {
 }
 
 func FromBytes(data []byte, logger *slog.Logger) (Protocol, error) {
-    if len(data) <= 5 {
-	return nil, errors.New("Invalid protocol size, got: " + fmt.Sprint(len(data)) + " <= 5")
+    if len(data) <= 1 {
+	return nil, errors.New("Invalid protocol size, got: " + fmt.Sprint(len(data)) + " <= 1")
     }
     command := commands.CommandId(data[0])
     if !commands.ValidCommandId(command){
@@ -36,9 +38,9 @@ func FromBytes(data []byte, logger *slog.Logger) (Protocol, error) {
 
     switch command {
 	case commands.PUSH:
-	    return NewPullProtocol(body, logger), nil
+	    return NewPushFromBytes(body, logger), nil
 	case commands.PULL:
-	    return NewPushProtocol(body, logger), nil
+	    return NewPullFromBytes(body, logger), nil
     }
     return nil, nil;
 }

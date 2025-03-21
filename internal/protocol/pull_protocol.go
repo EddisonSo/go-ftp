@@ -3,6 +3,7 @@ package protocol
 import (
     "log/slog"
     "eddisonso.com/go-ftp/internal/commands"
+    "net"
 )
 
 type PullProtocol struct {
@@ -10,7 +11,17 @@ type PullProtocol struct {
     File string
 }
 
-func NewPullProtocol(content []byte, logger *slog.Logger) *PullProtocol {
+func NewPullProtocol(f string, logger *slog.Logger) *PullProtocol {
+    return &PullProtocol{
+	BaseProtocol: BaseProtocol{
+	    Logger:	logger,
+	    CommandId:  commands.PULL,
+	},
+	File: f,
+    }
+}
+
+func NewPullFromBytes(content []byte, logger *slog.Logger) *PullProtocol {
     f := string(content)
     return &PullProtocol{
 	BaseProtocol: BaseProtocol{
@@ -32,6 +43,10 @@ func (pp *PullProtocol) PrintProtocol() {
     println("File: ", pp.File)
 }
 
-func (pp *PullProtocol) Execute() {
+func (pp *PullProtocol) ExecuteClient(conn net.Conn) {
+    return
+}
+
+func (pp *PullProtocol) ExecuteServer(conn net.Conn) {
     return
 }

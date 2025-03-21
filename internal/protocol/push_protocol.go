@@ -1,11 +1,13 @@
 package protocol
 
 import (
+    "eddisonso.com/go-ftp/internal/commands"
+    "eddisonso.com/go-ftp/internal/filehandler"
     "encoding/binary"
     "fmt"
     "log/slog"
-    "eddisonso.com/go-ftp/internal/commands"
-    "eddisonso.com/go-ftp/internal/filehandler"
+    "net"
+    "strings"
 )
 
 type PushProtocol struct {
@@ -15,9 +17,27 @@ type PushProtocol struct {
     Content []byte
 }
 
-func NewPushProtocol(body []byte, logger *slog.Logger) *PushProtocol{
+func NewPushProtocol(s uint32, f string, content []byte, logger *slog.Logger) *PushProtocol{
+    if len(f) > 4096 {
+	logger.Error("Filename too long")
+    }
+    
+    return &PushProtocol{
+	BaseProtocol: BaseProtocol{
+	    Logger: 	logger,
+	    CommandId:  commands.PUSH,
+	},
+	Filename: f,
+	Size: s,
+	Content: content,
+    }
+}
+
+func NewPushFromBytes(body []byte, logger *slog.Logger) *PushProtocol{
     s := binary.LittleEndian.Uint32(body[0:4])
-    content := body[4:]
+    filename := string(body[4:4100])
+    filename = strings.TrimRight(filename, "\000")
+    content := body[4100:]
 
     return &PushProtocol{
 	BaseProtocol: BaseProtocol{
@@ -25,6 +45,7 @@ func NewPushProtocol(body []byte, logger *slog.Logger) *PushProtocol{
 	    CommandId:  commands.PUSH,
 	},
 	Size: s,
+	Filename: filename,
 	Content: content,
     }
 }
@@ -54,11 +75,15 @@ func (pp *PushProtocol) GetContent() []byte {
     return pp.Content
 }
 
-func (pp *PushProtocol) Execute() {
-    writer, err := filehandler.NewFilewriter(pp.Filename, pp.Logger)
+func (pp *PushProtocol) ExecuteServer(conn net.Conn) {
+    writer, err := filehandler.NewFilewriter(string(pp.Filename), pp.Logger)
     if err != nil {
 	pp.Logger.Error(err.Error())
     }
     
     writer.Write(pp.Content)
+}
+
+func (pp *PushProtocol) ExecuteClient(conn net.Conn) {
+    conn.Write(pp.ToBytes())
 }
