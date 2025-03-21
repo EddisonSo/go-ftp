@@ -1,11 +1,16 @@
 package main
 
-import "eddisonso.com/go-ftp/internal/types"
-import "eddisonso.com/go-ftp/internal/server"
+import (
+	"log/slog"
+	"os"
+	"eddisonso.com/go-ftp/internal/server"
+	"eddisonso.com/go-ftp/internal/config"
+)
 
 func main() {
-    host := types.Host{Hostname:"0.0.0.0"};
-    config := types.ServerConfig{Host:host, Port:3000};
-    server, _ := server.GetServer(config);
+    logger := slog.New(slog.NewTextHandler(os.Stdout, nil));
+    host := config.Host{Hostname:"0.0.0.0"};
+    config := config.ServerConfig{Host:host, Port:3000};
+    server, _ := server.GetServer(config, logger);
     server.Listen();
 }
