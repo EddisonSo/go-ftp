@@ -3,6 +3,7 @@ package server
 import (
 	"io"
 	"net"
+	"fmt"
 	"strconv"
 	"eddisonso.com/go-ftp/internal/filehandler"
 	"eddisonso.com/go-ftp/internal/protocol"
@@ -35,10 +36,11 @@ func (s *Server) Listen() {
 
 	    data, err := io.ReadAll(conn)
 	    if err != nil {
-		panic(err)
+		s.Logger.Error(err.Error())
+		return
 	    }
 
-	    s.Logger.Info("Got: " + string(data))
+	    s.Logger.Info("Got: " + fmt.Sprint(data))
 
 	    p, err := protocol.FromBytes(data)
 	    if err != nil {

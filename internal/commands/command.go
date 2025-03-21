@@ -14,3 +14,7 @@ type Command struct {
     Id	  CommandId
     Args  []string
 }
+
+func ValidCommandId(id CommandId) bool {
+    return id >= PUSH && id <= DELETE
+}

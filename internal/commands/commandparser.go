@@ -5,7 +5,7 @@ import (
     "strings"
 )
 
-func getCommandId(command string) (CommandId, error) {
+func GetCommandId(command string) (CommandId, error) {
     switch command {
 	case "PUSH":
 	    return PUSH, nil
@@ -21,8 +21,24 @@ func getCommandId(command string) (CommandId, error) {
     return 255, errors.New("Invalid Command: " + command)
 }
 
+func GetCommandName(commandId CommandId) string {
+    switch commandId {
+    case PUSH:
+	return "PUSH"
+    case PULL:
+	return "PULL"
+    case MOVE:
+	return "MOVE"
+    case RENAME:
+	return "RENAME"
+    case DELETE:
+	return "DELETE"
+    }
+    return "INVALID"
+}
+
 func parseCommand(command string) Command {
-    commandId, err := getCommandId(command)
+    commandId, err := GetCommandId(command)
     if err != nil {
 	panic(err)
     }

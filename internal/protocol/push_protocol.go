@@ -1,5 +1,7 @@
 package protocol
 
+import "eddisonso.com/go-ftp/internal/commands"
+
 type PushProtocol struct {
     BaseProtocol
 }
@@ -7,7 +9,7 @@ type PushProtocol struct {
 func NewPushProtocol(size uint32, body []byte) *PullProtocol {
     return &PullProtocol{
 	BaseProtocol: BaseProtocol{
-	    Type:   "PULL",
+	    CommandId:  commands.PUSH,
 	    Size:   size,
 	    Body:   body,
 	},
