@@ -5,40 +5,21 @@ import (
 	"errors"
 	"fmt"
 	"strconv"
-
 	"eddisonso.com/go-ftp/internal/commands"
 )
 
 type BaseProtocol struct {
     CommandId commands.CommandId;
-    Size   uint32;
-    Body   []byte;
+    Other     []byte;
 }
 
 type Protocol interface {
     ToBytes() []byte;
-    GetBody() []byte;
+    PrintProtocol();
 }
 
-func (bp *BaseProtocol) ToBytes() []byte {
-    size := make([]byte, 4)
-    binary.LittleEndian.PutUint32(size, bp.Size)
-
-    result := []byte{byte(bp.CommandId)}
-    result = append(result, size...)
-    result = append(result, bp.Body...)
-    return result
-}
-
-func (bp *BaseProtocol) GetBody() []byte {
-    return bp.Body
-}
-
-func PrintProtocol(p BaseProtocol) {
-    println("Protocol:")
-    println("Command: ", p.CommandId, " (", commands.GetCommandName(p.CommandId), ")")
-    println("Size:", p.Size)
-    println("Body:", string(p.Body))
+func PrintProtocol(p Protocol) {
+    p.PrintProtocol()
 }
 
 func FromBytes(data []byte) (Protocol, error) {
