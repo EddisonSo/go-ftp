@@ -14,7 +14,7 @@ type Listener interface {
 
 func (s *Server) Listen() {
     listener, err := net.Listen("tcp", s.Config.Host.Hostname + ":" + strconv.Itoa(s.Config.Port))
-    s.logger.Info("Listening on: " + s.Config.Host.Hostname + ":" + strconv.Itoa(s.Config.Port))
+    s.Logger.Info("Listening on: " + s.Config.Host.Hostname + ":" + strconv.Itoa(s.Config.Port))
 
     if err != nil {
 	panic(err);
@@ -24,7 +24,7 @@ func (s *Server) Listen() {
 
     for {
 	conn, err := listener.Accept()
-	s.logger.Info("Connection from: " + conn.RemoteAddr().String())
+	s.Logger.Info("Connection from: " + conn.RemoteAddr().String())
 
 	if err != nil {
 	    panic(err);
@@ -38,16 +38,14 @@ func (s *Server) Listen() {
 		panic(err)
 	    }
 
-	    s.logger.Info("Got: " + string(data))
+	    s.Logger.Info("Got: " + string(data))
 
 	    p, err := protocol.FromBytes(data)
 	    if err != nil {
 		panic(err)
 	    }
 
-	    protocol.PrintProtocol(p)
-
-	    writer, err := filehandler.NewFilewriter("output.txt")
+	    writer, err := filehandler.NewFilewriter("output.txt", s.Logger)
 	    if err != nil {
 		panic(err)
 	    }

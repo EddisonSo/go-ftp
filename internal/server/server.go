@@ -1,18 +1,19 @@
 package server 
 
-import "eddisonso.com/go-ftp/internal/types"
-import "log/slog"
-import "os"
+import (
+    "eddisonso.com/go-ftp/internal/config"
+    "log/slog"
+)
 
 type Server struct {
-    Config types.ServerConfig;
-    logger *slog.Logger;
+    Config config.ServerConfig;
+    Logger *slog.Logger;
 }
 
-func GetServer(config types.ServerConfig) (*Server, error) {
+func GetServer(config config.ServerConfig, logger *slog.Logger) (*Server, error) {
     return &Server{
 	Config: config,
-	logger: slog.New(slog.NewJSONHandler(os.Stdout, nil)),
+	Logger: logger,
     }, nil;
 }
 
