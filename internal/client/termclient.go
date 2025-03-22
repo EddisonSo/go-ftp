@@ -2,18 +2,21 @@ package client
 
 import (
 	"fmt"
+	"log/slog"
+	"net"
 	"os"
 	"path/filepath"
 	"strings"
-
 	"eddisonso.com/go-ftp/internal/commands"
+	"eddisonso.com/go-ftp/internal/commandshandler"
 	"github.com/peterh/liner"
 )
 
 type term struct {
-    client     Client
+    conn *net.Conn
     tabPressed bool
     initialPressed bool
+    Logger	 *slog.Logger
 }
 
 const (
@@ -84,17 +87,22 @@ func (t *term) Prompt() {
             break
         }
 
-        if line == "exit" {
-            break
-        }
-
         t.tabPressed = false
-        fmt.Println("You entered:", line)
+	ret := commandshandler.HandleCommand(line, t.Logger, *t.conn)
+
+	if ret == commands.EXIT_ID {
+	    os.Exit(0)
+	}
+
+	if ret == 255 {
+	    fmt.Println("Invalid command")
+	}
     }
 }
 
 
-func NewTerm(c Client) *term {
-    return &term{client: c, tabPressed: false, initialPressed: false}
+func NewTerm(c *net.Conn, logger *slog.Logger) *term {
+    logger.Info("Creating new term")
+    return &term{conn: c, tabPressed: false, initialPressed: false, Logger: logger}
 }
 

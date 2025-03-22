@@ -3,7 +3,8 @@ package commands
 type CommandId uint8 
 
 const (
-    PUSH_ID 	CommandId = iota
+    EXIT_ID CommandId = iota
+    PUSH_ID
     PULL_ID
     MOVE_ID
     RENAME_ID
@@ -11,6 +12,7 @@ const (
 )
 
 const (
+    EXIT = "exit"
     PUSH = "push"
     PULL = "pull"
     MOVE = "move"
@@ -19,6 +21,7 @@ const (
 )
 
 var Commands = []string{
+    EXIT,
     PUSH,
     PULL,
     MOVE,
@@ -32,5 +35,5 @@ type Command struct {
 }
 
 func ValidCommandId(id CommandId) bool {
-    return id >= PUSH_ID && id <= DELETE_ID
+    return id >= EXIT_ID && id <= DELETE_ID
 }

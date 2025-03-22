@@ -1,10 +1,10 @@
 package server
 
 import (
-	"io"
 	"net"
-	"fmt"
 	"strconv"
+
+	"eddisonso.com/go-ftp/internal/commands"
 	"eddisonso.com/go-ftp/internal/protocol"
 )
 
@@ -23,6 +23,7 @@ func (s *Server) Listen() {
     defer listener.Close();
 
     for {
+	s.Logger.Info("Waiting for connection...")
 	conn, err := listener.Accept()
 	s.Logger.Info("Connection from: " + conn.RemoteAddr().String())
 
@@ -31,23 +32,23 @@ func (s *Server) Listen() {
 	}
 
 	go func(conn net.Conn) {
-	    defer conn.Close()
+	    for {
+		c := make([]byte, 1)
+		conn.Read(c)
+		if err != nil {
+		    s.Logger.Error(err.Error())
+		    return
+		}
 
-	    data, err := io.ReadAll(conn)
-	    if err != nil {
-		s.Logger.Error(err.Error())
-		return
+		if c[0] == byte(commands.EXIT_ID) {
+		    s.Logger.Info("Connection closed by client")
+		    conn.Close()
+		    break
+		}
+
+		p := protocol.NewPushProtocol(0, "", "", s.Logger)
+		p.ExecuteServer(conn)
 	    }
-
-	    s.Logger.Info("Got: " + fmt.Sprint(data))
-
-	    p, err := protocol.FromBytes(data, s.Logger)
-	    if err != nil {
-		s.Logger.Error(err.Error())
-		return
-	    }
-
-	    p.ExecuteServer(conn)
 	}(conn)
     }
 }

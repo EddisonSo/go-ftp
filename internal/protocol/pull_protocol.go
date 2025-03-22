@@ -32,12 +32,6 @@ func NewPullFromBytes(content []byte, logger *slog.Logger) *PullProtocol {
     }
 }
 
-func (pp *PullProtocol) ToBytes() []byte {
-    result := []byte{byte(pp.CommandId)}
-    result = append(result, pp.File...)
-    return result
-}
-
 func (pp *PullProtocol) PrintProtocol() {
     println("PullProtocol")
     println("File: ", pp.File)
