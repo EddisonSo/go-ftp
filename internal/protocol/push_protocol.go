@@ -1,8 +1,8 @@
 package protocol
 
 import (
-    "eddisonso.com/go-ftp/internal/commands"
     "eddisonso.com/go-ftp/internal/filehandler"
+    "eddisonso.com/go-ftp/internal/commands"
     "encoding/binary"
     "fmt"
     "log/slog"
@@ -25,7 +25,7 @@ func NewPushProtocol(s uint32, f string, content []byte, logger *slog.Logger) *P
     return &PushProtocol{
 	BaseProtocol: BaseProtocol{
 	    Logger: 	logger,
-	    CommandId:  commands.PUSH,
+	    CommandId:  commands.PUSH_ID,
 	},
 	Filename: f,
 	Size: s,
@@ -42,7 +42,7 @@ func NewPushFromBytes(body []byte, logger *slog.Logger) *PushProtocol{
     return &PushProtocol{
 	BaseProtocol: BaseProtocol{
 	    Logger: 	logger,
-	    CommandId:  commands.PUSH,
+	    CommandId:  commands.PUSH_ID,
 	},
 	Size: s,
 	Filename: filename,

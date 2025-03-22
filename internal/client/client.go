@@ -11,8 +11,8 @@ type Client struct {
 }
 
 
-func NewClient(config config.ClientConfig, logger *slog.Logger) *Client {
-    return &Client{
+func NewClient(config config.ClientConfig, logger *slog.Logger) Client {
+    return Client{
 	Config: config,
 	Logger: logger,
     }

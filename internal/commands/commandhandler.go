@@ -6,15 +6,15 @@ func (c *Commandhandler) HandleCommand(input string) {
     command := parseCommand(input)
 
     switch command.Id {
-	case PUSH:
+	case PUSH_ID:
 		// Handle push command
-	case PULL:
+	case PULL_ID:
 		// Handle pull command
-	case MOVE:
+	case MOVE_ID:
 		// Handle move command
-	case RENAME:
+	case RENAME_ID:
 		// Handle rename command
-	case DELETE:
+	case DELETE_ID:
 		// Handle delete command
 	}
 }

@@ -1,32 +1,16 @@
 package main
 
-import "eddisonso.com/go-ftp/internal/protocol"
-import "eddisonso.com/go-ftp/internal/filehandler"
-import "net"
-import "log/slog"
-import "os"
+import (
+    "log/slog"
+    "eddisonso.com/go-ftp/internal/client"
+    "eddisonso.com/go-ftp/internal/config"
+)
 
 func main() {
-    logger := slog.New(slog.NewTextHandler(os.Stdout, nil));
-    
-    conn, err := net.Dial("tcp", "127.0.0.1:3000")
-    if err != nil {
-	panic(err)
-    }
-
-    reader, err := filehandler.NewFilereader("input.txt", logger)
-    if err != nil {
-	panic(err)
-    }
-
-    n, err := reader.Getsize()
-    if err != nil {
-	panic(err)
-    }
-
-    body := make([]byte, n)
-    reader.Read(body)
-
-    protocol := protocol.NewPushProtocol(n, "output.txt", body, logger)
-    protocol.ExecuteClient(conn)
+    logger := slog.Logger{}
+    cConfig := config.ClientConfig{Host: "localhost", Port: 3000, Homedir: "~/"}
+    c := client.NewClient(cConfig, &logger)
+    term := client.NewTerm(c)
+    term.Prompt()
 }
+

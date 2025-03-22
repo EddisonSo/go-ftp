@@ -1,8 +1,8 @@
 package protocol
 
 import (
-    "log/slog"
     "eddisonso.com/go-ftp/internal/commands"
+    "log/slog"
     "net"
 )
 
@@ -15,7 +15,7 @@ func NewPullProtocol(f string, logger *slog.Logger) *PullProtocol {
     return &PullProtocol{
 	BaseProtocol: BaseProtocol{
 	    Logger:	logger,
-	    CommandId:  commands.PULL,
+	    CommandId:  commands.CommandId(commands.PUSH_ID),
 	},
 	File: f,
     }
@@ -26,7 +26,7 @@ func NewPullFromBytes(content []byte, logger *slog.Logger) *PullProtocol {
     return &PullProtocol{
 	BaseProtocol: BaseProtocol{
 	    Logger:	logger,
-	    CommandId:  commands.PULL,
+	    CommandId:  commands.PULL_ID,
 	},
 	File: f,
     }

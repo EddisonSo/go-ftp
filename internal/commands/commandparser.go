@@ -8,30 +8,30 @@ import (
 func GetCommandId(command string) (CommandId, error) {
     switch command {
 	case "PUSH":
-	    return PUSH, nil
+	    return PUSH_ID, nil
 	case "PULL":
-	    return PULL, nil
+	    return PULL_ID, nil
 	case "MOVE":
-	    return MOVE, nil
+	    return MOVE_ID, nil
 	case "RENAME":
-	    return RENAME, nil
+	    return RENAME_ID, nil
 	case "DELETE":
-	    return DELETE, nil
+	    return DELETE_ID, nil
     }
     return 255, errors.New("Invalid Command: " + command)
 }
 
 func GetCommandName(commandId CommandId) string {
     switch commandId {
-    case PUSH:
+    case PUSH_ID:
 	return "PUSH"
-    case PULL:
+    case PULL_ID:
 	return "PULL"
-    case MOVE:
+    case MOVE_ID:
 	return "MOVE"
-    case RENAME:
+    case RENAME_ID:
 	return "RENAME"
-    case DELETE:
+    case DELETE_ID:
 	return "DELETE"
     }
     return "INVALID"
