@@ -70,9 +70,17 @@ func (pp *PushProtocol) ExecuteServer(conn net.Conn) {
     if err != nil {
 	pp.Logger.Error(err.Error())
     }
-    
+
     content := make([]byte, pp.Size)
-    conn.Read(content)
+    totalBytesRead := 0
+    for totalBytesRead < int(pp.Size) {
+	bytesRead, err := conn.Read(content[totalBytesRead:])
+	if err != nil && err.Error() != "EOF" {
+	    pp.Logger.Error("Error reading from connection: " + err.Error())
+	    return
+	}
+	totalBytesRead += bytesRead
+    }
     writer.Write(content)
 }
 

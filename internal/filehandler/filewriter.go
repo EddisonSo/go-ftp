@@ -2,7 +2,6 @@ package filehandler
 
 import "bufio"
 import "os"
-import "fmt"
 import "log/slog"
 
 type Writer struct {
@@ -13,7 +12,6 @@ type Writer struct {
 
 func (w *Writer) Write(b []byte) (int, error) {
     w.Logger.Info("Writing to file: " + w.Filename)
-    w.Logger.Info("Data: " + fmt.Sprintf("%s", b))
     n, err := w.Filereader.Write(b)
     w.Filereader.Flush()
     return n, err
